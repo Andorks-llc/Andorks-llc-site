@@ -1,57 +1,557 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Andorks Security</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andorks Security | Alarm.com Monitoring &amp; Smart Protection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161C;
+    --panel:#1B2029;
+    --panel-raised:#212833;
+    --line:#2A3138;
+    --text:#E8EAED;
+    --muted:#8B93A1;
+    --amber:#E8A33D;
+    --amber-dim:#8a6427;
+    --armed:#5FBE9B;
+    --alert:#E2574C;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--amber);color:var(--ink);}
+  :focus-visible{outline:2px solid var(--amber);outline-offset:3px;}
+
+  .wrap{max-width:1160px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:rgba(18,22,28,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;}
+  .logo{
+    font-family:var(--font-display);font-weight:700;font-size:19px;
+    letter-spacing:0.02em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo .dot{
+    width:9px;height:9px;border-radius:50%;background:var(--armed);
+    box-shadow:0 0 8px var(--armed);
+    animation:blink 2.6s ease-in-out infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.35;}}
+  .navlinks{display:flex;align-items:center;gap:32px;}
+  .navlinks a{
+    font-family:var(--font-mono);font-size:13px;color:var(--muted);
+    display:flex;align-items:center;gap:8px;
+    transition:color .2s;
+  }
+  .navlinks a .num{color:var(--amber);}
+  .navlinks a:hover{color:var(--text);}
+  .nav-cta{
+    font-family:var(--font-mono);font-size:13px;font-weight:500;
+    background:var(--amber);color:var(--ink);
+    padding:10px 18px;border-radius:3px;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(232,163,61,0.25);}
+  .menu-toggle{display:none;background:none;border:1px solid var(--line);color:var(--text);width:38px;height:38px;border-radius:3px;font-family:var(--font-mono);}
+
+  @media (max-width:840px){
+    .navlinks{position:fixed;top:64px;left:0;right:0;background:var(--panel);
+      flex-direction:column;align-items:flex-start;gap:0;
+      border-bottom:1px solid var(--line);
+      max-height:0;overflow:hidden;transition:max-height .3s ease;
+    }
+    .navlinks.open{max-height:400px;}
+    .navlinks a{width:100%;padding:16px 24px;border-bottom:1px solid var(--line);}
+    .nav-cta{margin:16px 24px;}
+    .menu-toggle{display:block;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:88px 0 64px;}
+  .hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:center;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+
+  .eyebrow{
+    font-family:var(--font-mono);font-size:12.5px;color:var(--amber);
+    letter-spacing:0.12em;text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;margin-bottom:22px;
+  }
+  .eyebrow::before{content:'';width:24px;height:1px;background:var(--amber);}
+
+  h1{
+    font-family:var(--font-display);font-weight:700;
+    font-size:clamp(38px,5.4vw,64px);line-height:1.03;letter-spacing:-0.01em;
+    margin-bottom:22px;
+  }
+  h1 em{font-style:normal;color:var(--armed);}
+  .hero p.lead{font-size:17px;color:var(--muted);max-width:46ch;margin-bottom:36px;}
+
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn{
+    font-family:var(--font-mono);font-size:14px;font-weight:500;
+    padding:15px 26px;border-radius:3px;display:inline-flex;align-items:center;gap:10px;
+    transition:transform .15s, box-shadow .15s, background .15s;
+  }
+  .btn-primary{background:var(--amber);color:var(--ink);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(232,163,61,0.28);}
+  .btn-ghost{border:1px solid var(--line);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--muted);}
+
+  /* control panel mock */
+  .panel-mock{
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:22px;box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+  .panel-top{display:flex;justify-content:space-between;align-items:center;
+    padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line);}
+  .panel-top .brand{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:0.08em;}
+  .status-pill{
+    font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:0.06em;
+    color:var(--armed);background:rgba(95,190,155,0.1);
+    border:1px solid rgba(95,190,155,0.35);
+    padding:5px 10px;border-radius:20px;display:flex;align-items:center;gap:7px;
+  }
+  .status-pill .led{width:6px;height:6px;border-radius:50%;background:var(--armed);animation:blink 2s ease-in-out infinite;}
+  .zone-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:11px 0;border-bottom:1px solid var(--line);
+    font-family:var(--font-mono);font-size:13px;
+  }
+  .zone-row:last-child{border-bottom:none;}
+  .zone-row .zid{color:var(--amber);margin-right:12px;}
+  .zone-row .zname{color:var(--text);flex:1;}
+  .zone-row .zstate{color:var(--armed);font-size:11px;}
+  .panel-foot{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);
+    font-family:var(--font-mono);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+
+  /* ---------- TRUST BAR ---------- */
+  .trustbar{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:28px 0;}
+  .trustbar .wrap{display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;}
+  .trust-item{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+  .trust-item strong{color:var(--text);font-weight:600;}
+
+  /* ---------- SECTION HEADERS ---------- */
+  section{padding:96px 0;}
+  .sec-head{max-width:60ch;margin-bottom:56px;}
+  .sec-head .eyebrow{margin-bottom:14px;}
+  h2{font-family:var(--font-display);font-weight:700;font-size:clamp(28px,3.6vw,40px);letter-spacing:-0.01em;margin-bottom:14px;}
+  .sec-head p{color:var(--muted);font-size:16px;}
+
+  /* ---------- ZONES / SERVICES ---------- */
+  .zones{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  @media (max-width:760px){.zones{grid-template-columns:1fr;}}
+  .zone-card{background:var(--panel);padding:34px;transition:background .2s;}
+  .zone-card:hover{background:var(--panel-raised);}
+  .zone-card-top{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .zone-num{font-family:var(--font-mono);font-size:12px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;border-radius:3px;}
+  .zone-led{width:7px;height:7px;border-radius:50%;background:var(--armed);}
+  .zone-card h3{font-family:var(--font-display);font-size:19px;font-weight:600;margin-bottom:10px;}
+  .zone-card p{color:var(--muted);font-size:14.5px;}
+
+  /* ---------- PROCESS ---------- */
+  .process-row{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  @media (max-width:760px){.process-row{grid-template-columns:1fr;}}
+  .process-step{border-top:2px solid var(--amber);padding-top:20px;}
+  .process-step .step-num{font-family:var(--font-mono);font-size:34px;color:var(--panel-raised);font-weight:700;-webkit-text-stroke:1px var(--line);display:block;margin-bottom:10px;}
+  .process-step h3{font-family:var(--font-display);font-size:18px;margin-bottom:8px;}
+  .process-step p{color:var(--muted);font-size:14.5px;}
+
+  /* ---------- LOG / TESTIMONIALS ---------- */
+  .log{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .log-head{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);padding:14px 22px;border-bottom:1px solid var(--line);letter-spacing:0.06em;display:flex;justify-content:space-between;}
+  .log-entry{padding:22px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:110px 1fr;gap:20px;}
+  .log-entry:last-child{border-bottom:none;}
+  @media (max-width:640px){.log-entry{grid-template-columns:1fr;gap:8px;}}
+  .log-time{font-family:var(--font-mono);font-size:12px;color:var(--amber);}
+  .log-quote{font-size:15.5px;color:var(--text);}
+  .log-quote .who{display:block;margin-top:8px;font-family:var(--font-mono);font-size:12px;color:var(--muted);}
+
+  /* ---------- PAYMENTS ---------- */
+  .pay-card{
+    background:linear-gradient(145deg, var(--panel-raised), var(--panel));
+    border:1px solid var(--line);border-radius:10px;
+    padding:44px;display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;
+  }
+  @media (max-width:760px){.pay-card{grid-template-columns:1fr;padding:30px;}}
+  .pay-card h2{margin-bottom:12px;}
+  .pay-card p{color:var(--muted);font-size:15px;margin-bottom:0;}
+  .pay-keypad{
+    background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:24px;
+  }
+  .keypad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+  .keypad-grid span{
+    text-align:center;padding:12px 0;border:1px solid var(--line);border-radius:4px;
+    font-family:var(--font-mono);color:var(--muted);font-size:14px;
+  }
+  .pay-btn{
+    display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+    background:var(--amber);color:var(--ink);font-family:var(--font-mono);font-weight:600;
+    font-size:14px;padding:16px;border-radius:5px;transition:transform .15s,box-shadow .15s;
+  }
+  .pay-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(232,163,61,0.3);}
+  .pay-note{font-family:var(--font-mono);font-size:11px;color:var(--muted);text-align:center;margin-top:12px;}
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:56px;}
+  @media (max-width:860px){.contact-grid{grid-template-columns:1fr;}}
+  .toggle-row{display:flex;gap:0;border:1px solid var(--line);border-radius:5px;overflow:hidden;margin-bottom:28px;width:fit-content;}
+  .toggle-row button{
+    font-family:var(--font-mono);font-size:13px;padding:11px 22px;background:var(--panel);
+    color:var(--muted);transition:.2s;
+  }
+  .toggle-row button.active{background:var(--amber);color:var(--ink);font-weight:600;}
+  .info-line{display:flex;gap:14px;margin-bottom:20px;font-size:14.5px;color:var(--muted);}
+  .info-line strong{color:var(--text);font-family:var(--font-mono);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;display:inline-block;}
+
+  form{display:flex;flex-direction:column;gap:16px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:520px){.form-row{grid-template-columns:1fr;}}
+  input,textarea{
+    background:var(--panel);border:1px solid var(--line);border-radius:4px;
+    padding:14px;color:var(--text);font-family:var(--font-body);font-size:14px;width:100%;
+  }
+  input:focus,textarea:focus{border-color:var(--amber);}
+  textarea{resize:vertical;min-height:120px;}
+  label{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);margin-bottom:6px;display:block;letter-spacing:0.04em;}
+  .submit-btn{align-self:flex-start;}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--line);padding:40px 0;}
+  footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;}
+  footer .logo{font-size:16px;}
+  .foot-links{display:flex;gap:24px;font-family:var(--font-mono);font-size:12px;color:var(--muted);}
+  .foot-copy{font-family:var(--font-mono);font-size:12px;color:var(--muted);}
+
+  /* scroll reveal */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1;transform:none;transition:none;}
+    .led,.dot{animation:none !important;}
+  }
+</style>
 </head>
 <body>
-  <header class="hero">
-    <div class="hero-content">
-      <h1>Protect What Matters</h1>
-      <p>Top-tier Alarm.com Security Solutions for Your Home & Business</p>
-      <a href="#contact" class="cta-button">Get a Free Quote</a>
+
+<header>
+  <nav class="wrap">
+    <a href="#top" class="logo"><span class="dot"></span>ANDORKS SECURITY</a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+    <div class="navlinks" id="navlinks">
+      <a href="#zones"><span class="num">01</span>Services</a>
+      <a href="#process"><span class="num">02</span>How It Works</a>
+      <a href="#reviews"><span class="num">03</span>Reviews</a>
+      <a href="#pay"><span class="num">04</span>Pay Invoice</a>
+      <a href="#contact"><span class="num">05</span>Contact</a>
+      <a href="#contact" class="nav-cta">Get a Free Quote</a>
     </div>
-  </header>
-  <section class="features">
-    <h2>Why Choose Andorks Security?</h2>
-    <div class="feature-cards">
-      <div class="card">24/7 Monitoring</div>
-      <div class="card">Smart Home Integration</div>
-      <div class="card">Remote Access Control</div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Alarm.com Certified Dealer</div>
+        <h1>Protect what matters, <em>armed and watching.</em></h1>
+        <p class="lead">Andorks Security designs, installs, and monitors smart alarm systems for homes and businesses — with a live team on the line 24/7, not a call center script.</p>
+        <div class="cta-row">
+          <a href="#contact" class="btn btn-primary">Get a Free Quote →</a>
+          <a href="#zones" class="btn btn-ghost">See what's covered</a>
+        </div>
+      </div>
+
+      <div class="panel-mock reveal">
+        <div class="panel-top">
+          <span class="brand">ANDORKS · CONTROL PANEL</span>
+          <span class="status-pill"><span class="led"></span>ARMED</span>
+        </div>
+        <div class="zone-row"><span class="zid">Z1</span><span class="zname">Perimeter Sensors</span><span class="zstate">SECURE</span></div>
+        <div class="zone-row"><span class="zid">Z2</span><span class="zname">Interior Motion</span><span class="zstate">SECURE</span></div>
+        <div class="zone-row"><span class="zid">Z3</span><span class="zname">Smart Locks</span><span class="zstate">SECURE</span></div>
+        <div class="zone-row"><span class="zid">Z4</span><span class="zname">Live Video Feed</span><span class="zstate">SECURE</span></div>
+        <div class="panel-foot"><span>Last check-in: just now</span><span>Monitoring: 24/7</span></div>
+      </div>
     </div>
   </section>
-  <section class="testimonials">
-    <h2>What Our Clients Say</h2>
-    <div class="carousel">
-      <div class="testimonial active">"Andorks Security gave us peace of mind!"</div>
-      <div class="testimonial">"Seamless setup and incredible support."</div>
-      <div class="testimonial">"The best investment for our family's safety."</div>
+
+  <!-- TRUST BAR -->
+  <div class="trustbar">
+    <div class="wrap">
+      <div class="trust-item"><strong>24/7</strong> live monitoring team</div>
+      <div class="trust-item"><strong>&lt;60 sec</strong> average dispatch alert</div>
+      <div class="trust-item"><strong>Licensed</strong> &amp; insured technicians</div>
+      <div class="trust-item"><strong>Alarm.com</strong> smart platform</div>
+    </div>
+  </div>
+
+  <!-- ZONES / SERVICES -->
+  <section id="zones">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Coverage</div>
+        <h2>Every zone of your property, covered</h2>
+        <p>We design each system around how your home or business actually moves — not a one-size-fits-all box off the shelf.</p>
+      </div>
+      <div class="zones reveal">
+        <div class="zone-card">
+          <div class="zone-card-top"><span class="zone-num">ZONE 01</span><span class="zone-led"></span></div>
+          <h3>Perimeter Protection</h3>
+          <p>Door and window sensors, glass-break detection, and outdoor cameras that catch trouble before it's inside.</p>
+        </div>
+        <div class="zone-card">
+          <div class="zone-card-top"><span class="zone-num">ZONE 02</span><span class="zone-led"></span></div>
+          <h3>Interior Sensors</h3>
+          <p>Motion detectors and smoke/CO monitoring tuned to ignore pets and everyday noise, not just alarms.</p>
+        </div>
+        <div class="zone-card">
+          <div class="zone-card-top"><span class="zone-num">ZONE 03</span><span class="zone-led"></span></div>
+          <h3>Smart Home Control</h3>
+          <p>Locks, lights, and thermostats tied into one system, so arming the alarm can lock the door and dim the lights too.</p>
+        </div>
+        <div class="zone-card">
+          <div class="zone-card-top"><span class="zone-num">ZONE 04</span><span class="zone-led"></span></div>
+          <h3>Remote Access</h3>
+          <p>Arm, disarm, and check live video from anywhere with the Alarm.com app — no landline required.</p>
+        </div>
+      </div>
     </div>
   </section>
-  <section id="contact" class="contact">
-    <h2>Contact Us</h2>
-    <form
-      id="contact-form"
-      action="https://formspree.io/f/xrebyvby"
-      method="POST"
-    >
-      <input type="text" name="name" placeholder="Your Name" required />
-      <input type="email" name="email" placeholder="Your Email" required />
-      <input type="text" name="address" placeholder="Your Property Address" required />
-      <input type="radio" id="html" name="business_resi" value="Business">
-      <label for="html">Business</label><br>
-      <input type="radio" id="css" name="business_resi" value="Residential">
-      <label for="css">Residential</label><br>
-      <textarea name="message" placeholder="Your Message" required></textarea>
-      <input type="hidden" name="_next" value="https://andorks.com/andorks-security/#contact" />
-      <button type="submit">Send Message</button>
-    </form>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Getting Started</div>
+        <h2>From walkthrough to armed, in three steps</h2>
+      </div>
+      <div class="process-row reveal">
+        <div class="process-step">
+          <span class="step-num">01</span>
+          <h3>Free on-site assessment</h3>
+          <p>We walk the property, flag weak points, and design a system around them — no generic packages.</p>
+        </div>
+        <div class="process-step">
+          <span class="step-num">02</span>
+          <h3>Clean, same-week install</h3>
+          <p>Licensed technicians install and test every sensor, then walk you through arming and disarming.</p>
+        </div>
+        <div class="process-step">
+          <span class="step-num">03</span>
+          <h3>24/7 monitoring begins</h3>
+          <p>Our monitoring team and the Alarm.com app take over from there — day one and every day after.</p>
+        </div>
+      </div>
+    </div>
   </section>
-  <footer>
-    <p>&copy; 2025 Andorks Security. All rights reserved.</p>
-  </footer>
-  <script src="script.js"></script>
+
+  <!-- REVIEWS / LOG -->
+  <section id="reviews">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Client Log</div>
+        <h2>What clients say after we leave</h2>
+      </div>
+      <div class="log reveal">
+        <div class="log-head"><span>INCOMING · CLIENT FEEDBACK</span><span>ALL ENTRIES VERIFIED</span></div>
+        <div class="log-entry">
+          <span class="log-time">RESIDENTIAL</span>
+          <div class="log-quote">Andorks Security gave us real peace of mind — the app makes it easy to check in on the house from anywhere.<span class="who">— Homeowner, Summit County</span></div>
+        </div>
+        <div class="log-entry">
+          <span class="log-time">BUSINESS</span>
+          <div class="log-quote">Seamless setup and incredible support. They were on-site fast when we needed a sensor adjusted.<span class="who">— Small business owner</span></div>
+        </div>
+        <div class="log-entry">
+          <span class="log-time">RESIDENTIAL</span>
+          <div class="log-quote">The best investment we've made for our family's safety. Install was quick and the team explained everything.<span class="who">— Homeowner</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section id="pay">
+    <div class="wrap">
+      <div class="pay-card reveal">
+        <div>
+          <div class="eyebrow">Client Account</div>
+          <h2>Pay your invoice securely</h2>
+          <p>Existing clients can pay a monitoring or service invoice online through our secure Square checkout — no login required, and it takes about a minute.</p>
+        </div>
+        <div class="pay-keypad">
+          <div class="keypad-grid">
+            <span>1</span><span>2</span><span>3</span>
+            <span>4</span><span>5</span><span>6</span>
+            <span>7</span><span>8</span><span>9</span>
+          </div>
+          <a class="pay-btn" href="https://square.link/u/b4FCsgOn" target="_blank" rel="noopener noreferrer">
+            Pay Invoice Now →
+          </a>
+          <div class="pay-note">Secured &amp; processed by Square</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="wrap contact-grid">
+      <div class="reveal">
+        <div class="eyebrow">Get a Free Quote</div>
+        <h2>Tell us what you're protecting</h2>
+        <div class="info-line"><strong>Response</strong> We typically reply within one business day.</div>
+        <div class="info-line"><strong>Coverage</strong> Residential and commercial systems, new install or upgrade.</div>
+        <div class="info-line"><strong>Monitoring</strong> 24/7, every day of the year.</div>
+      </div>
+      <div class="reveal">
+        <div class="toggle-row" id="toggleRow">
+          <button type="button" class="active" data-val="Residential">Residential</button>
+          <button type="button" data-val="Business">Business</button>
+        </div>
+        <form id="quoteForm" action="https://formspree.io/f/xrebyvby" method="POST">
+          <input type="hidden" id="propertyType" name="property_type" value="Residential">
+          <div class="form-row">
+            <div>
+              <label for="name">Full name</label>
+              <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+            </div>
+            <div>
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" placeholder="(330) 000-0000" required>
+            </div>
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="jane@email.com" required>
+          </div>
+          <div>
+            <label for="message">What do you need protected?</label>
+            <textarea id="message" name="message" placeholder="e.g. new construction home, 4 doors, 2 stories"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary submit-btn">Send Message</button>
+          <p id="formStatus" class="pay-note" style="text-align:left;margin-top:4px;min-height:16px;"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="#top" class="logo"><span class="dot"></span>ANDORKS SECURITY</a>
+    <div class="foot-links">
+      <a href="#zones">Services</a>
+      <a href="#pay">Pay Invoice</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="foot-copy">© 2026 Andorks Security. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  // mobile menu
+  const menuToggle = document.getElementById('menuToggle');
+  const navlinks = document.getElementById('navlinks');
+  menuToggle.addEventListener('click', () => navlinks.classList.toggle('open'));
+  navlinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navlinks.classList.remove('open')));
+
+  // property type toggle
+  const toggleRow = document.getElementById('toggleRow');
+  const propertyType = document.getElementById('propertyType');
+  toggleRow.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      toggleRow.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      propertyType.value = btn.dataset.val;
+    });
+  });
+
+  // form submit — AJAX to Formspree
+  const quoteForm = document.getElementById('quoteForm');
+  const formStatus = document.getElementById('formStatus');
+
+  quoteForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = quoteForm.querySelector('.submit-btn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    formStatus.textContent = '';
+    formStatus.style.color = 'var(--muted)';
+
+    try {
+      const response = await fetch(quoteForm.action, {
+        method: 'POST',
+        body: new FormData(quoteForm),
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        btn.textContent = 'Message Sent ✓';
+        btn.style.background = '#5FBE9B';
+        formStatus.textContent = "Thanks — we'll be in touch within one business day.";
+        formStatus.style.color = 'var(--armed)';
+        quoteForm.reset();
+        document.querySelectorAll('#toggleRow button').forEach(b => b.classList.remove('active'));
+        document.querySelector('#toggleRow button[data-val="Residential"]').classList.add('active');
+        propertyType.value = 'Residential';
+      } else {
+        const data = await response.json().catch(() => null);
+        const errMsg = data && data.errors && data.errors.length
+          ? data.errors.map(er => er.message).join(', ')
+          : 'Something went wrong. Please try again or call us directly.';
+        formStatus.textContent = errMsg;
+        formStatus.style.color = 'var(--alert)';
+        btn.textContent = originalText;
+      }
+    } catch (err) {
+      formStatus.textContent = 'Network error — please try again in a moment.';
+      formStatus.style.color = 'var(--alert)';
+      btn.textContent = originalText;
+    } finally {
+      btn.disabled = false;
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+      }, 3500);
+    }
+  });
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+
 </body>
 </html>
